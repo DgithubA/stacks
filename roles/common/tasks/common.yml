@@ -1,0 +1,35 @@
+---
+- name: Update packages cache
+  ansible.builtin.package:
+    update_cache: true
+  changed_when: false
+  tags:
+    - common
+
+- name: Include os specific vars
+  ansible.builtin.include_vars:
+    file: "{{ ansible_distribution | lower }}.yml"
+  tags:
+    - common
+
+- name: Install prerequisite packages
+  ansible.builtin.package:
+    name: "{{ common_prerequisite_packages }}"
+    state: present
+  tags:
+    - common
+
+- name: Install basic packages
+  ansible.builtin.package:
+    name: "{{ common_packages }}"
+    state: present
+  tags:
+    - common
+
+- name: Disable SELinux
+  ansible.posix.selinux:
+    state: disabled
+  when: ansible_distribution == "Rocky"
+  tags:
+    - common
+    - rocky

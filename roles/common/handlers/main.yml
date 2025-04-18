@@ -1,0 +1,14 @@
+---
+- name: Restart sshd
+  ansible.builtin.service:
+    name: sshd
+    state: restarted
+
+- name: Restart systemd-resolved
+  ansible.builtin.service:
+    name: systemd-resolved
+    state: restarted
+
+- name: Update resolvconf
+  ansible.builtin.command: resolvconf -u
+  changed_when: false

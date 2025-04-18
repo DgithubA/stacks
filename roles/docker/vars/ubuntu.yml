@@ -1,0 +1,14 @@
+---
+
+docker_conflicting_packages:
+  - docker.io
+  - docker-doc
+  - docker-compose
+  - docker-compose-v2
+  - podman-docker
+  - containerd
+  - runc
+
+docker_required_packages:
+  - ca-certificates
+  - curl

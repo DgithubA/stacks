@@ -1,0 +1,119 @@
+---
+- name: Get latest version if not defined
+  ansible.builtin.uri:
+    url: "{{ node_exporter_repo_api_url }}"
+    return_content: true
+  register: release_data
+  when: node_exporter_version == ""
+  tags:
+    - bin
+
+- name: Set latest version from GitHub API
+  ansible.builtin.set_fact:
+    node_exporter_version: "{{ release_data.json.tag_name | regex_replace('^v', '') }}"
+  when: node_exporter_version == ""
+  tags:
+    - bin
+
+- name: Set architecture
+  ansible.builtin.set_fact:
+    arch_map:
+      x86_64: "linux-amd64"
+      aarch64: "linux-arm64"
+      armv7l: "linux-armv7"
+      ppc64le: "linux-ppc64le"
+      s390x: "linux-s390x"
+      riscv64: "linux-riscv64"
+      mips64le: "linux-mips64le"
+      mips: "linux-mips"
+      netbsd: "netbsd-amd64"
+      openbsd: "openbsd-amd64"
+    host_arch: "{{ arch_map[ansible_architecture] | default('linux-amd64') }}"
+  tags:
+    - bin
+
+- name: Set download URL based on architecture
+  ansible.builtin.set_fact:
+    arch_map:
+      x86_64: "linux-amd64"
+      aarch64: "linux-arm64"
+      armv7l: "linux-armv7"
+      ppc64le: "linux-ppc64le"
+      s390x: "linux-s390x"
+      riscv64: "linux-riscv64"
+      mips64le: "linux-mips64le"
+      mips: "linux-mips"
+      netbsd: "netbsd-amd64"
+      openbsd: "openbsd-amd64"
+    host_arch: "{{ arch_map[ansible_architecture] | default('linux-amd64') }}"
+    download_url: "{{ node_exporter_download_base_url }}/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.{{ host_arch }}.tar.gz"
+    filename: "node_exporter-{{ node_exporter_version }}.{{ host_arch }}.tar.gz"
+  tags:
+    - bin
+
+- name: Try to download node_exporter archive
+  block:
+    - name: Download Node Exporter archive
+      ansible.builtin.get_url:
+        url: "{{ download_url }}"
+        dest: "/tmp/{{ filename }}"
+        mode: "0644"
+      register: download_result
+      ignore_errors: true
+      tags:
+        - bin
+
+    - name: Fail if download failed due to missing architecture
+      ansible.builtin.fail:
+        msg: "❌ node_exporter does not have a release for architecture '{{ ansible_architecture }}'."
+      when:
+        - download_result is defined
+        - (download_result.status is defined and download_result.status == 404) or (download_result.failed is defined and download_result.failed)
+      tags:
+        - bin
+
+- name: Create user for node_exporter
+  ansible.builtin.user:
+    name: "{{ node_exporter_user }}"
+    shell: /bin/false
+    create_home: false
+    state: present
+  tags:
+    - bin
+
+- name: Mkdir extarct path
+  ansible.builtin.file:
+    path: "/tmp/{{ filename | regex_replace('\\.(tar\\.gz|tgz)$', '') }}"
+    state: directory
+    mode: "0755"
+  tags:
+    - bin
+
+- name: Extract archive file
+  ansible.builtin.unarchive:
+    src: "/tmp/{{ filename }}"
+    dest: "/tmp/{{ filename | regex_replace('\\.(tar\\.gz|tgz)$', '') }}"
+    remote_src: true
+    extra_opts: [--strip-components=1]
+  tags:
+    - bin
+
+- name: Copy node_exporter binary to target location
+  ansible.builtin.copy:
+    src: "/tmp/node_exporter-{{ node_exporter_version }}.{{ host_arch }}/node_exporter"
+    dest: "{{ node_exporter_executable_path }}"
+    remote_src: true
+    owner: "{{ node_exporter_user }}"
+    group: "{{ node_exporter_user }}"
+    mode: "0774"
+  tags:
+    - bin
+
+- name: Make node exporter system service and start/restart service
+  ansible.builtin.template:
+    src: "node_exporter.service.j2"
+    dest: "/etc/systemd/system/node_exporter.service"
+    mode: "0644"
+  notify: Restart node_exporter service
+  tags:
+    - bin

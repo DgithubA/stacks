@@ -1,0 +1,10 @@
+---
+
+node_exporter_stacks_path: "{{ docker_stacks_path }}/node_exporter"
+node_exporter_version: "" # if not set use download latest version (without v at begin)
+node_exporter_user: "node_exporter" # will make group with this name
+node_exporter_executable_path: "/usr/local/bin/node_exporter" # for install with binary
+node_exporter_listen_address: 127.0.0.1:9100 # when u bind on docker0 network u can access it from containers too.
+
+node_exporter_flags:
+  - "--web.listen-address={{ node_exporter_listen_address }}"

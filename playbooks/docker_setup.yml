@@ -1,0 +1,7 @@
+---
+- name: Install and configuration docker
+  hosts: all
+  become: true
+  gather_facts: true
+  roles:
+    - docker

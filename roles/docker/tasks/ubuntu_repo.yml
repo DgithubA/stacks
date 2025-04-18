@@ -1,0 +1,44 @@
+---
+- name: Ensure keyrings directory exists ( Ubuntu )
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: "0755"
+  tags:
+    - repo
+
+- name: Download Docker GPG key ( Ubuntu )
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    dest: /etc/apt/keyrings/docker.asc
+    mode: "0644"
+  tags:
+    - repo
+
+- name: Add Docker repository ( Ubuntu )
+  ansible.builtin.apt_repository:
+    repo: >
+      deb [arch={{  'amd64' if ansible_architecture == 'x86_64' else ansible_architecture }}
+      signed-by=/etc/apt/keyrings/docker.asc]
+      https://download.docker.com/linux/ubuntu
+      {{ ansible_lsb.codename }} stable
+    filename: "docker"
+    state: present
+  tags:
+    - repo
+
+- name: Update apt cache ( Ubuntu )
+  ansible.builtin.apt:
+    update_cache: true
+  tags:
+    - repo
+
+- name: Get docker packages versions (Ubuntu)
+  ansible.builtin.shell: set -o pipefail && apt-cache madison {{ item }} | grep "{{ docker_version }}" | awk '{print $3}'
+  changed_when: false
+  loop:
+    - docker-ce
+    - docker-ce-cli
+  register: docker_versions_raw
+  tags:
+    - repo

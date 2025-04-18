@@ -1,0 +1,23 @@
+---
+
+common_prerequisite_packages:
+  - dnf-utils
+  - epel-release
+
+common_packages:
+  - python3
+  - htop
+  - net-tools
+  - vim
+  - nano
+  - lsof
+  - bash-completion
+  - tmux
+  - curl
+  - wget
+  - git
+  - rsync
+  - zip
+  - unzip
+  - python3-docker
+  - tree

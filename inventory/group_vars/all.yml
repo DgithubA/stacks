@@ -1,0 +1,27 @@
+---
+ansible_user: root
+ansible_ssh_private_key_file: /root/.ssh/id_ed25519
+
+admin_user: root
+
+docker_stacks_path: "/opt/stacks"
+
+venv_path: "/opt/ansible-venv"
+manual_ansible_python_interpreter: "{{ venv_path }}/bin/python"
+docker_sdk_path: "{{ venv_path }}"
+docker_sdk_path_python_interpreter: "{{ docker_sdk_path }}/bin/python"
+
+sdk_package_requirements:
+  - python3
+  - python3-pip
+  - python3-venv
+
+interpreter_required_packages:
+  - docker
+  - jsondiff
+  - pyyaml
+  - cryptography
+
+default_ansible_python_interpreter: /usr/bin/python3
+
+ansible_python_interpreter: "{{ default_ansible_python_interpreter }}"

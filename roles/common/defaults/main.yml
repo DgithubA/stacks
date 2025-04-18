@@ -1,0 +1,31 @@
+---
+
+common_dns_servers:
+  - 8.8.8.8
+  - 1.1.1.1
+  - 10.202.10.202
+  - 10.202.10.102
+  - 178.22.122.100
+  - 185.51.200.2
+
+common_ssh_permit_root_login: "no"
+common_ssh_enable_password_authentication: "no"
+common_ssh_permit_empty_passwords: "no"
+common_ssh_public_key_authentication: "yes"
+common_ssh_authentication_methods: "publickey"
+
+common_ssh_port: 22
+common_ssh_max_auth_tries: 3
+common_ssh_login_grace_time: 1m
+
+common_ssh_x11_forwarding: "no"
+common_ssh_allow_tcp_forwarding: "no"
+common_ssh_allow_agent_forwarding: "no"
+
+common_ssh_use_pam: "yes"
+common_ssh_use_dns: "no"
+common_ssh_banner: none
+common_ssh_max_sessions: 5
+
+common_ssh_users:
+  - dana_ahmadi

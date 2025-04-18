@@ -1,0 +1,5 @@
+pass_files/
+**venv**
+.ansible
+.vscode
+inventory/local-**

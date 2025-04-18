@@ -1,0 +1,34 @@
+---
+- name: Check if docker-ce.repo exists ( Rocky )
+  ansible.builtin.stat:
+    path: /etc/yum.repos.d/docker-ce.repo
+  register: docker_repo_file
+  tags:
+    - repo
+
+- name: Add docker repository ( Rocky )
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docker-ce.repo
+    mode: "0644"
+  when:
+    - not docker_repo_file.stat.exists
+  tags:
+    - repo
+
+- name: Enable docker repo ( Rocky )
+  ansible.builtin.dnf:
+    enablerepo:
+      - docker-ce
+  tags:
+    - repo
+
+- name: Get docker packages versions (Rocky)
+  ansible.builtin.shell: set -o pipefail && dnf --showduplicates list {{ item }} --available | grep '{{ docker_version }}' | awk '{print $2}'
+  changed_when: false
+  loop:
+    - docker-ce
+    - docker-ce-cli
+  register: docker_versions_raw
+  tags:
+    - repo

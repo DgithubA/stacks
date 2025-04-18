@@ -1,0 +1,35 @@
+---
+- name: Include docker variables for the specific os
+  ansible.builtin.include_vars:
+    file: "{{ ansible_distribution | lower }}.yml"
+  tags:
+    - always
+
+- name: Prepare
+  ansible.builtin.import_tasks: prepare.yml
+  tags:
+    - python
+    - prepare
+
+- name: Install docker
+  ansible.builtin.package:
+    name: "{{ docker_packages }}"
+    state: present
+    allow_downgrade: true
+  notify: Restart docker
+
+- name: Configuration
+  ansible.builtin.import_tasks: configuration.yml
+  tags:
+    - config
+    - daemon
+
+- name: Interpreter
+  ansible.builtin.import_tasks: interpreter.yml
+  tags:
+    - interpreter
+
+- name: Deployer user
+  ansible.builtin.import_tasks: deployer_user.yml
+  tags:
+    - deployer

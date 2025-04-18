@@ -1,0 +1,31 @@
+---
+- name: Change dns servers ( Rocky )
+  ansible.builtin.template:
+    src: resolv-dns.j2
+    dest: /etc/resolv.conf
+    owner: root
+    group: root
+    mode: "0644"
+    backup: true
+  when: ansible_facts['distribution'] == "Rocky"
+  tags:
+    - dns
+
+- name: Change dns servers ( Ubuntu )
+  when: ansible_facts['distribution'] == "Ubuntu"
+  tags:
+    - dns
+  block:
+    - name: Install resolvconf package
+      ansible.builtin.package:
+        name: resolvconf
+        state: present
+
+    - name: Set dns servers for resolvconf
+      ansible.builtin.template:
+        src: resolv-dns.j2
+        dest: /etc/resolvconf/resolv.conf.d/head
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Update resolvconf

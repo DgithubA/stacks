@@ -1,0 +1,25 @@
+---
+
+common_prerequisite_packages:
+  - software-properties-common
+  - build-essential
+
+common_packages:
+  - python3
+  - htop
+  - net-tools
+  - vim
+  - nano
+  - lsof
+  - bash-completion
+  - tmux
+  - curl
+  - wget
+  - git
+  - rsync
+  - zip
+  - unzip
+  - btop
+  - resolvconf
+  - python3-docker
+  - tree

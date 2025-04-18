@@ -1,0 +1,29 @@
+---
+- name: Create deployment user
+  ansible.builtin.user:
+    name: deployer
+    comment: "Deployment user for Docker"
+    shell: /bin/bash
+    create_home: true
+  tags:
+    - deployer
+
+- name: Ensure the Docker group exists
+  ansible.builtin.group:
+    name: docker
+    state: present
+  register: docker_group
+  changed_when: false
+  failed_when: false
+  tags:
+    - deployer
+
+- name: Add docker group to deployment user
+  ansible.builtin.user:
+    name: deployer
+    groups:
+      - deployer
+      - docker
+  when: docker_group.state == "present"
+  tags:
+    - deployer

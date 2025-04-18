@@ -1,0 +1,26 @@
+---
+
+namespace: dgithuba
+name: stacks
+version: 1.0.0
+readme: README.md
+authors:
+  - Dana Ahmadi <bibaks34@gmail.com> (https://danaahmadi.ir)
+description: >
+  A handy collection of Ansible roles for setting up everyday DevOps tools with ease.
+  From installing Docker and monitoring with Node Exporter to setting up VPNs and DNS configs — all in one place.
+  Built with simplicity in mind, so you can spend less time configuring and more time building.
+
+license:
+  - "MIT"
+
+tags:
+  - docker
+  - nodeexporter
+  - monitoring
+  - prometheus
+
+dependencies:
+  "community.docker": "*"
+
+repository: https://github.ir/dgithuba/stacks

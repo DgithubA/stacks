@@ -1,0 +1,28 @@
+---
+- name: Check host have docker
+  ansible.builtin.command: docker --version
+  register: docker_check
+  ignore_errors: true
+  changed_when: false
+  tags:
+    - always
+
+- name: Install node_exporter
+  block:
+    - name: Install node_exporter with docker
+      ansible.builtin.include_tasks: docker.yml
+      when: >
+        (ansible_run_tags | list | length == 0 and docker_check.rc == 0)
+        or
+        ('docker' in ansible_run_tags and docker_check.rc == 0)
+      tags:
+        - docker
+
+    - name: Install node_exporter with bin file
+      ansible.builtin.include_tasks: bin.yml
+      when: >
+        ('bin' in ansible_run_tags)
+        or
+        (ansible_run_tags | list | length == 0 and docker_check.rc != 0)
+      tags:
+        - bin

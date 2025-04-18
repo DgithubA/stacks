@@ -1,0 +1,22 @@
+---
+- name: Setup Python venv for Ansible
+  hosts: all
+  become: true
+  vars:
+    ansible_python_interpreter: "{{ default_ansible_python_interpreter }}"
+  tasks:
+    - name: Install SDK requirements
+      ansible.builtin.package:
+        name: "{{ sdk_package_requirements }}"
+        state: present
+      tags:
+        - interpreter
+
+    - name: Install docker SDK
+      ansible.builtin.pip:
+        name: "{{ sdk_venv_packages }}"
+        state: present
+        virtualenv: "{{ venv_path }}"
+        virtualenv_command: "python3 -m venv {{ venv_path }}"
+      tags:
+        - interpreter

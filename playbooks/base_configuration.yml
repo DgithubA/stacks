@@ -1,0 +1,11 @@
+---
+- name: Apply base configurations
+  hosts: all
+  become: true
+  roles:
+    - role: common
+      tags:
+        - common
+    - role: docker
+      tags:
+        - docker

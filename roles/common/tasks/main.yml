@@ -1,0 +1,19 @@
+---
+- name: Common Configurations
+  ansible.builtin.include_tasks:
+    file: "common.yml"
+  tags:
+    - common
+
+- name: DNS Configuration
+  ansible.builtin.include_tasks:
+    file: "dns.yml"
+  tags:
+    - dns
+
+- name: SSH Configuration
+  ansible.builtin.include_tasks:
+    file: "ssh.yml"
+  tags:
+    - ssh
+    - publickey

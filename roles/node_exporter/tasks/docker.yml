@@ -1,0 +1,29 @@
+---
+- name: Change interpreter for call docker commands
+  ansible.builtin.set_fact:
+    ansible_python_interpreter: " {{ manual_ansible_python_interpreter }} "
+  tags:
+    - docker
+
+- name: Mkdir docker stacks path if not exist
+  ansible.builtin.file:
+    path: "{{ node_exporter_stacks_path }}"
+    state: directory
+    mode: "0755"
+  tags:
+    - docker
+
+- name: Copy docker compose file
+  ansible.builtin.template:
+    src: docker-compose.yml.j2
+    dest: "{{ node_exporter_stacks_path }}/docker-compose.yml"
+    mode: "664"
+  tags:
+    - docker
+
+- name: Start service
+  community.docker.docker_compose_v2:
+    project_src: "{{ node_exporter_stacks_path }}"
+    state: present
+  tags:
+    - docker

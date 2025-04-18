@@ -1,0 +1,21 @@
+PermitRootLogin {{ ssh_permit_root_login }}
+PasswordAuthentication {{ ssh_enable_password_authentication }}
+PermitEmptyPasswords {{ ssh_permit_empty_passwords }}
+PubkeyAuthentication {{ ssh_public_key_authentication }}
+AuthenticationMethods {{ ssh_authentication_methods }}
+
+Port {{ ssh_port }}
+#MaxAuthTries {{ ssh_max_auth_tries }}
+LoginGraceTime {{ ssh_login_grace_time }}
+
+
+X11Forwarding {{ ssh_x11_forwarding }}
+AllowTcpForwarding {{ ssh_allow_tcp_forwarding }}
+AllowAgentForwarding {{ ssh_allow_agent_forwarding }}
+
+
+UsePAM {{ ssh_use_pam }}
+UseDNS {{ ssh_use_dns }}
+Banner {{ ssh_banner }}
+MaxSessions {{ ssh_max_sessions }}
+

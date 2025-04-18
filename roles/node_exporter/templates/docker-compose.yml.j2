@@ -1,0 +1,14 @@
+services:
+  node_exporter:
+    image: {{ node_exporter_docker_image_name }}:{{ 'v' + node_exporter_version if node_exporter_version != "" else 'latest' }}
+    container_name: node_exporter
+    command:
+      - '--path.rootfs=/host'
+{% for flag in node_exporter_flags %}
+      - '{{ flag }}'
+{% endfor %}
+    network_mode: host
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'

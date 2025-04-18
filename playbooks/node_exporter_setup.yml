@@ -1,0 +1,7 @@
+---
+- name: Install node exporter
+  hosts: all
+  become: true
+  gather_facts: true
+  roles:
+    - node_exporter

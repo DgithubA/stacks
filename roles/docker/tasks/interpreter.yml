@@ -1,0 +1,20 @@
+---
+- name: Install docker SDK requirements
+  ansible.builtin.package:
+    name: "{{ docker_sdk_package_requirements }}"
+    state: present
+  tags:
+    - interpreter
+
+- name: Install docker SDK
+  ansible.builtin.pip:
+    name:
+      - docker
+      - jsondiff
+      - pyyaml
+      - cryptography
+    state: present
+    virtualenv: /opt/ansible-venv
+    virtualenv_command: python3 -m venv {{ docker_sdk_path }}
+  tags:
+    - interpreter
