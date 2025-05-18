@@ -1,5 +1,9 @@
 ---
 
+node_exporter_docker_image_name: "quay.io/prometheus/node-exporter"
+node_exporter_download_base_url: "https://github.com/prometheus/node_exporter/releases/download"
+node_exporter_repo_api_url: "https://api.github.com/repos/prometheus/node_exporter/releases/latest"
+
 node_exporter_stacks_path: "{{ docker_stacks_path }}/node_exporter"
 node_exporter_version: "" # if not set use download latest version (without v at begin)
 node_exporter_user: "node_exporter" # will make group with this name

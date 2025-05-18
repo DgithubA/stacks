@@ -1,5 +1,2 @@
 # SPDX-License-Identifier: MIT-0
 ---
-node_exporter_docker_image_name: "quay.io/prometheus/node-exporter"
-node_exporter_download_base_url: "https://github.com/prometheus/node_exporter/releases/download"
-node_exporter_repo_api_url: "https://api.github.com/repos/prometheus/node_exporter/releases/latest"
