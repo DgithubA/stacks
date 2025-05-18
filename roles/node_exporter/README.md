@@ -10,6 +10,11 @@ you can clone this rules [collection](https://github.com/dgithuba/stacks) and ru
 ```bash
 ansible-playbook playbooks/node_exporter_setup.yml
 ```
+
+If you want to force installation via Docker, use the `docker` tag. To force binary installation, use the `bin` tag.  
+If no tag is specified, the role will try to detect Docker; if available, it will prefer Docker installation by default.
+
+
 Requirements
 ------------
 
@@ -19,30 +24,47 @@ You can install it with:
 ansible-galaxy collection install community.docker
 ```
 
+If you want to install Node Exporter using Docker, make sure the target interpreter has the following Python packages installed:  
+
+- `docker`  
+- `jsondiff`  
+- `pyyaml`  
+
+These are required for Ansible Docker modules to work properly.  
+
 Role Variables
 --------------
+`node_exporter_docker_image_name`: Docker image used for running Node Exporter.  
+default: `quay.io/prometheus/node-exporter`
 
-# Where to place node_exporter Docker Compose stack (used with Docker install)
-node_exporter_stacks_path: "{{ docker_stacks_path }}/node_exporter"
 
-# Version of node_exporter to install. Leave empty to auto-detect latest version.
-# Note: Do not include the "v" prefix. Example: "1.9.1"
-node_exporter_version: ""
+`node_exporter_download_base_url`: Base URL for downloading Node Exporter binaries.  
+default: `https://github.com/prometheus/node_exporter/releases/download`  
 
-# The Linux user (and group) that will run node_exporter
-node_exporter_user: "node_exporter"
 
-# Path to place the node_exporter binary (used for binary install)
-node_exporter_executable_path: "/usr/local/bin/node_exporter"
+`node_exporter_repo_api_url`: GitHub API URL to fetch the latest Node Exporter version.  
+default: `https://api.github.com/repos/prometheus/node_exporter/releases/latest`  
 
-# Listening address for node_exporter metrics endpoint
-# For example, using the Docker bridge IP (172.17.0.1) makes it accessible from other containers.
-node_exporter_listen_address: "127.0.0.1:9100"
 
-# Custom flags to pass to node_exporter
-# You can add more flags as needed based on your monitoring setup.
-node_exporter_flags:
-  - "--web.listen-address={{ node_exporter_listen_address }}"
+`node_exporter_stacks_path`: Path to the Docker stack configuration for Node Exporter.(used with Docker install)
+default: `{{ docker_stacks_path }}/node_exporter`  
+
+
+`node_exporter_version`: Version to install; if empty, latest version is fetched (without `v`).  
+
+
+`node_exporter_user`: User used to run Node Exporter; group with the same name is also created.  default: `node_exporter`  
+
+
+`node_exporter_executable_path`: Path to install Node Exporter binary when using binary installation.  
+default: `/usr/local/bin/node_exporter`  
+
+
+`node_exporter_listen_address`: Listen address for Node Exporter; useful for container access.  
+default: `127.0.0.1:9100`
+
+
+`node_exporter_flags`: Extra flags passed to Node Exporter command. you can see all options with `node_exporter --help`
 
 
 Dependencies
@@ -50,7 +72,7 @@ Dependencies
 
 This role does not include Docker installation by default.
 If you plan to use the Docker-based setup for Node Exporter, it is recommended to use a separate role to install Docker first (for example, a docker role), before running this one.
-You can use [dgithuba.stacks.docker](/roles/docker/) to install docker.
+You can use [dgithuba.stacks.docker](/roles/docker/) to install docker.  
 
 Example Playbook
 ----------------
